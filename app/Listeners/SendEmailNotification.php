@@ -5,7 +5,8 @@ namespace App\Listeners;
 use App\Events\TodoCreatedEvent;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
-
+use Mail;
+use App\Mails\TodoCreatedMail;
 class SendEmailNotification
 {
     /**
@@ -26,7 +27,7 @@ class SendEmailNotification
      */
     public function handle(TodoCreatedEvent $event)
     {
-      Mail::to($event->user)->send(new TodoCreatedMail($event->user));
+      Mail::to($event->email)->send(new TodoCreatedMail($event->joinTodo));
 
     }
 }

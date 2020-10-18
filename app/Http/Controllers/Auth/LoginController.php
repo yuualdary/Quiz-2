@@ -18,11 +18,13 @@ class LoginController extends Controller
     {
 
       $data = [];
+     
 
-      $credentials = $request->only(['no_hp', 'password']);
 
-      if (! $token = auth()->attempts($credentials)) {
-          return response()->json(['error' => 'Unauthorized'], 401);
+      if (! $token = auth()->attempts($request->only('no_hp', 'password'))) {//its same wkwkwk
+          
+        return response()->json(['error' => 'Unauthorized'], 401);
+        
       }
 
       $data['token'] = $token;
@@ -31,7 +33,8 @@ class LoginController extends Controller
       return response()->json([
          'response_code' => '00',
          'response_message' => 'user berhasil login' ,
-         'data'    => $data
+         'data'    => $data,
+         'token' => $token,
 
        ], 200);
     }

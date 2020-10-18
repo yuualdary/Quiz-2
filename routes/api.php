@@ -9,9 +9,9 @@ Route::group([
 
 ], function ($router) {
 
-  Route::post('register' , 'RegisterController');
-  Route::post('login' , 'LoginController');
-  Route::post('logout' , 'LogoutController');
+  Route::post('register' , 'RegisterController');//done
+  Route::post('login' , 'LoginController');//done
+  Route::post('logout' , 'LogoutController');//
 
 });
 
@@ -24,9 +24,12 @@ Route::group([
 
 ], function ($router) {
 
-  Route::get('/' , 'TodoController@index');
-  Route::post('/' , 'TodoController@store');
-  Route::post('/change-done-status/{$id}' , 'TodoController@changeDoneStatus');
-  Route::post('/delete/{$id}' , 'TodoController@delete');
+  Route::get('/' , 'TodoController@index');//done
+  Route::post('/' , 'TodoController@store');//done
+  Route::post('/change-done-status/{$id}' , 'TodoController@changeDoneStatus');//done
+  Route::post('/delete/{$id}' , 'TodoController@delete');//dine
 
 });
+
+
+

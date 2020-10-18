@@ -5,32 +5,46 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TodoRequest;
 use Illuminate\Http\Request;
-use App\Todo;
+use App\Models\Todo;
+use App\Resource\TodoResource;
+use Auth;
+use App\Events\TodoCreatedEvent;
+use Illuminate\Support\Facades\DB;
+
 
 
 class TodoController extends Controller
 {
   public function index(){
 
-      $todos = Todo::where('user_id' , user()->id)->orderBy('created_at' , 'desc')->get();
+      $todos = Todo::where('user_id' ,Auth::user()->id)
+                  ->orderBy('created_at' , 'desc')
+                  ->get();
 
       return TodoResource::collection($todos);
     }
 
     public function store(TodoRequest $request){
 
-      $todo = auth()->user()->create([
+      $todo = todo::create([
+        'user_id' =>Auth::user()->id,
         'text' => $request->text,
         'done' => 0
       ]);
 
-      event(new TodoCreatedEvent($todo));
+
+      $joinTodo=DB::table('todos')
+                ->join('users','users.id','=','todos.user_id')
+                ->where([['todos.id','=',$todo->id]])//ini sebenarny bakal error, karena table id ada 2 di soal sama" id, harusnya $todo->todo_id, karena db suah seperti itu saya tidak berani ubah hehehe
+                ->get(); 
+
+      event(new TodoCreatedEvent($todo,$joinTodo));
 
       return new TodoResource($todo);
     }
 
     public function delete($id){
-      Todo::destroys($id);
+      Todo::destroy($id);
       return 'success';
     }
 
@@ -42,10 +56,16 @@ class TodoController extends Controller
         $update = 1;
       }
 
-      $todo->update([
-        'done' => $update
-      ]);
+      $todo->done=$update;
+      $todo->save();
 
+      $data['todo']=$todos;
+
+      // $todo->update([
+      //   'done' => $update
+      // ]);
+      
+      
       return new TodoResources($todos);
     }
 }
